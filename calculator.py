@@ -171,6 +171,7 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     sings = ["+", "-", "*", "/"]
+    numbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
 
     def percent_it(self):
         screen = self.output_lable.text()
@@ -193,15 +194,15 @@ class Ui_MainWindow(object):
                 number2 = int(number2)
             result = number2 * (number / 100)
             index = -(len(str(number)))
-            print(result)
-            print(index)
+
             screen = screen[:index] + str(result)
-            print(screen[:index])
         self.output_lable.setText(screen)
 
     def math_it(self):
         screen = self.output_lable.text()
         answer = eval(screen)
+        if int(answer) == answer:
+            answer = int(answer)
         self.output_lable.setText(str(answer))
 
     def plus_minus_it(self):
@@ -240,10 +241,24 @@ class Ui_MainWindow(object):
         self.output_lable.setText('0')
 
     def pres_it(self, pressed):
+        screen = self.output_lable.text()
+        if pressed in self.numbers:
+            if screen == '0':
+                screen = pressed
+            else:
+                screen = f'{screen}{pressed}'
+        elif pressed in self.sings:
+            last_element = screen[-1]
+            if last_element in self.sings:
+                screen = f'{screen[:-1]}{pressed}'
+            elif last_element in self.numbers:
+                screen = f'{screen}{pressed}'
+            for el in self.sings:
+                if el in screen[:-1]:
+                    self.math_it()
+                    screen = f'{self.output_lable.text()}{pressed}'
+        self.output_lable.setText(screen)
 
-        if self.output_lable.text() == '0':
-            self.output_lable.setText('')
-        self.output_lable.setText(f'{self.output_lable.text()}{pressed}')
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
